@@ -1,0 +1,7 @@
+#page-wrapper{
+	padding-top: 65px;
+}
+/*Fix modal can't scroll (when open 2 modals)*/
+#songModal{
+    overflow-y:scroll;
+}
