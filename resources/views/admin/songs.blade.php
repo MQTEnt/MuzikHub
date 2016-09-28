@@ -1,6 +1,6 @@
 @extends('admin.layout.master')
 @section('body.content')
-<div class="row">
+<div class="row" ng-app="songApp" ng-controller="songCtrl">
 	<div class="col-sm-12">
 		<button class="btn btn-success" data-toggle="modal" data-target="#songModal">Add New</button>
 		<!-- Modal -->
@@ -12,7 +12,15 @@
 						<h4 class="modal-title">Add New Song</h4>
 					</div>
 					<div class="modal-body">
-						<div class="form-horizontal">
+						<!-- Display error validation -->
+						<div id="validationError" class="alert alert-danger">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<strong>Have some errors:</strong>
+							<ul>
+							</ul>
+						</div>
+						<!-- End Display error validation -->
+						<form class="form-horizontal">
 							<div class="form-group">
 								<div class="col-sm-2">
 									<label class="control-label">Song's name:</label>
@@ -136,8 +144,9 @@
 								</div>
 								<div class="col-sm-9">
 									<label class="btn btn-default btn-file">
-										Upload audio<input type="file" style="display: none;">
+										Upload audio<input id="audioFile" name="audioFile" type="file" style="display: none;" onchange="angular.element(this).scope().getAudioFile(this.files)">
 									</label>
+									<p id="audioFileName"></p>
 								</div>
 							</div>
 							<div class="form-group">
@@ -146,13 +155,15 @@
 								</div>
 								<div class="col-sm-9">
 									<label class="btn btn-default btn-file">
-										Upload image<input type="file" style="display: none;">
+										Upload image<input id="imageFile" type="file" style="display: none;" onchange="angular.element(this).scope().getImageFile(this.files)">
 									</label>
+									<img src="" alt="" id="imgContent">
 								</div>
 							</div>
-						</div>
+						</form>
 					</div>
 					<div class="modal-footer">
+						<button type="button" class="btn btn-success" ng-click="storeAudioFile()">Insert</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>

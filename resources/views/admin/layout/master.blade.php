@@ -56,7 +56,80 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="/js/sb-admin-2.min.js"></script>
-
+    
+    <!-- AngularJS -->
+    <script src="/js/angular.min.js"></script>
+    <script>
+        var app = angular.module('songApp',[]);
+        app.controller('songCtrl',function($scope, $http){
+            var af = new FormData(); //Audio file
+            var imgf = new FormData(); //Image file
+            /*
+            *Get audio file
+            */
+            $scope.getAudioFile = function(files){
+                af.append("audioFile", files[0]);
+                //Display file name
+                $('#audioFileName').text(files[0].name);
+            }
+            /*
+            *Get image file
+            */
+            $scope.getImageFile = function(files){
+                imgf.append("imageFile", files[0]);
+                //Display image file
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgContent')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+                };
+                reader.readAsDataURL(files[0]);
+            }
+            /*
+            *Store song
+            */
+            $scope.storeAudioFile = function(){
+                //Delete old alert (if exsist)
+                $('#validationError ul li').remove();
+                /*
+                *Store image file
+                */
+                $http.post('/admin/song/image_file', imgf,{
+                    withCredentials: true,
+                    headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
+                    transformRequest: angular.identity
+                }).success(function(data){
+                    console.log(data);
+                })
+                .error(function(data){
+                    $('#validationError').css('display', 'block');
+                    //Display new alert
+                    angular.forEach(data, function(item, key){
+                        $('#validationError ul').append('<li>'+item+'</li>');
+                    });
+                });
+                /*
+                *Store audio file
+                */
+                $http.post('/admin/song/audio_file', af,{
+                    withCredentials: true,
+                    headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
+                    transformRequest: angular.identity
+                }).success(function(data){
+                    console.log(data);
+                })
+                .error(function(data){
+                    $('#validationError').css('display', 'block');
+                    //Display new alert
+                    angular.forEach(data, function(item, key){
+                        $('#validationError ul').append('<li>'+item+'</li>');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

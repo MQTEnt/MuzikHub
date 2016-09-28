@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -18,5 +17,6 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function(){
 	//Songs
 	Route::get('song', ['as' => 'song.index', 'uses' => 'SongsController@index']);
-	Route::post('song', ['as' => 'song.store', 'uses' => 'SongController@store']);
+	Route::post('song/audio_file', ['as' => 'song.storeAudioFile', 'uses' => 'SongsController@storeAudioFile']);
+	Route::post('song/image_file', ['as' => 'song.storeImageFile', 'uses' => 'SongsController@storeImageFile']);
 });

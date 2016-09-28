@@ -5,3 +5,10 @@
 #songModal{
     overflow-y:scroll;
 }
+#validationError{
+	display: none;
+}
+#imgContent{
+	display: block;
+	margin-top: 10px;
+}
