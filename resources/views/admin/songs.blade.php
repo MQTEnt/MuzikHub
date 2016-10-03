@@ -42,17 +42,9 @@
 										<div class="modal-dialog modal-sm">
 											<div class="modal-content">
 												<div class="modal-body">
-													<p><a href="#"><span class="glyphicon glyphicon-plus"></span>Add New</a></p>
-													<p><a href="#"><span class="glyphicon glyphicon-refresh"></span>Refesh</a></p>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Maroon5</label>
-													</div>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Coldplay</label>
-													</div>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Eminem</label>
-													</div>
+													<script>
+														$('#composerModal .modal-body').load('/templates/get_composer_quick_form.html');
+													</script>
 												</div>
 											</div>
 										</div>

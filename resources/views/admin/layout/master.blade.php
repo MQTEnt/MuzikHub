@@ -27,40 +27,50 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
+        <![endif]-->
 
-<body>
+        <!-- jQuery -->
+        <script src="/js/jquery.min.js"></script>
 
-    <div id="wrapper">
+        <!-- AngularJS -->
+        <script src="/js/angular.min.js"></script>
 
-        <!-- Navigation -->
-        @include('admin.partial.navbar')
-        <!-- End Navigation -->
+        <!-- Auto-complete module -->
+        <script src="/js/bootstrap3-typeahead.js"></script>
+        <script src="/js/angular-bootstrap3-typeahead.js"></script>
+    </head>
 
-        <div id="page-wrapper">
-            @yield('body.content')
+    <body>
+
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            @include('admin.partial.navbar')
+            <!-- End Navigation -->
+
+            <div id="page-wrapper">
+                @yield('body.content')
+            </div>
+            <!-- /#page-wrapper -->
+
         </div>
-        <!-- /#page-wrapper -->
+        <!-- /#wrapper -->
 
-    </div>
-    <!-- /#wrapper -->
-    <!-- jQuery -->
-    <script src="/js/jquery.min.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="/js/bootstrap.min.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/js/bootstrap.min.js"></script>
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="/js/metisMenu.min.js"></script>
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/js/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/js/sb-admin-2.min.js"></script>
-    
-    <!-- AngularJS -->
-    <script src="/js/angular.min.js"></script>
-    <script>
-        var app = angular.module('songApp',[]);
+        <!-- Custom Theme JavaScript -->
+        <script src="/js/sb-admin-2.min.js"></script>
+        <script>
+        var app = angular.module('songApp', ['bootstrap3-typeahead'], function($interpolateProvider) {
+            //'bootstrap3-typeahead' is a dependent module for auto-complete feature
+            //Using <% %> instead {{}} (2 way binding)
+            $interpolateProvider.startSymbol('<%');
+            $interpolateProvider.endSymbol('%>');
+        });
         app.controller('songCtrl',function($scope, $http){
             var af = new FormData(); //Audio file
             var imgf = new FormData(); //Image file
@@ -127,9 +137,40 @@
                         $('#validationError ul').append('<li>'+item+'</li>');
                     });
                 });
+            };
+            /*
+            *Quick search or add new composer
+            */
+            $scope.composers = ["Maroon5", "Eminem", "Coldplay"];
+            $scope.addItem = function () {
+                $scope.errortext = "";
+                if (!$scope.newItem) {return;}
+                if ($scope.composers.indexOf($scope.newItem) == -1) {
+                    $scope.composers.push($scope.newItem);
+                } else {
+                    $scope.errortext = "Composer is aready in list";
+                }
             }
+            $scope.removeItem = function (x) {
+                $scope.errortext = "";
+                $scope.composers.splice(x, 1);
+            };
+            /*
+            *Auto-complete
+            */
+            $scope.states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+            'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+            'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+            'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+            'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+            'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+            'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+            'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+            'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+            ];
+            $scope.value = '';
         });
-    </script>
+</script>
 </body>
 
 </html>
