@@ -25,8 +25,15 @@ Route::group(['prefix' => 'admin'], function(){
 	Route::post('song/image_file', ['as' => 'song.storeImageFile', 'uses' => 'SongsController@storeImageFile']);
 	Route::get('audio/delete/{idAudio}', 'SongsController@deleteAudio');
 	Route::get('image/delete/{idImage}', 'SongsController@deleteImage');
+	Route::post('artist', 'SongsController@insertArtist');
 });
 
+
+
+
+
+
+//Test upload file and process bar
 Route::post('upload', function(Request $request){
 	$fileUpload = $request->file('file');
 	if ($fileUpload!=null) {

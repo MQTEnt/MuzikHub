@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Requests\AudioRequest;
 use App\Http\Requests\ImageRequest;
+use App\Http\Requests\ArtistRequest;
 use App\Song;
 use App\Audio;
 use App\Image;
+use App\Artist;
 use App\Lib\MimeReader;
 use File;
 use Illuminate\Support\Facades\Validator;
@@ -31,24 +33,6 @@ class SongsController extends Controller
 		$songs = Song::all();
 		return view('admin.songs', compact('songs'));
 	}
-	public function storeImageFile(ImageRequest $request){
-		$imageFile = $request->file('imageFile');
-		if ($imageFile!=null) {
-
-            $ext = $imageFile->getClientOriginalExtension();
-            $nameFile = str_random(15).'.'.$ext;
-        }
-		$publicDir = public_path().'/media/imgs';
-		
-  		$request->file('imageFile')->move($publicDir, $nameFile);
-        
-        //Save info into database
-  		$image = new Image();
-  		$image->path = $publicDir.'/'.$nameFile;
-  		$image->save();
-  		$dataResponse = ['idImage' => $image->id, 'success' => 'true'];
-  		return $dataResponse;
-	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
 		if ($audioFile!=null) {
@@ -67,16 +51,40 @@ class SongsController extends Controller
   		$dataResponse = ['idAudio' => $audio->id, 'success' => 'true'];
   		return $dataResponse;
 	}
-	public function deleteImage($idImage){
-		$image = Image::find($idImage);
-		File::Delete($image->path);
-		$image->delete();
-		return ['stat' => 'Deleted image'];
+	public function storeImageFile(ImageRequest $request){
+		$imageFile = $request->file('imageFile');
+		if ($imageFile!=null) {
+
+            $ext = $imageFile->getClientOriginalExtension();
+            $nameFile = str_random(15).'.'.$ext;
+        }
+		$publicDir = public_path().'/media/imgs';
+		
+  		$request->file('imageFile')->move($publicDir, $nameFile);
+        
+        //Save info into database
+  		$image = new Image();
+  		$image->path = $publicDir.'/'.$nameFile;
+  		$image->save();
+  		$dataResponse = ['idImage' => $image->id, 'success' => 'true'];
+  		return $dataResponse;
 	}
 	public function deleteAudio($idAudio){
 		$audio = Audio::find($idAudio);
 		File::Delete($audio->path);
 		$audio->delete();
 		return ['stat' => 'Deleted audio'];
+	}
+	public function deleteImage($idImage){
+		$image = Image::find($idImage);
+		File::Delete($image->path);
+		$image->delete();
+		return ['stat' => 'Deleted image'];
+	}
+	public function insertArtist(ArtistRequest $request){
+		Artist::create([
+			'name' => $request->name
+		]);
+		return 'Create a artist';
 	}
 }

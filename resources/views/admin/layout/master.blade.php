@@ -204,25 +204,101 @@
             /*
             *Quick search or add new composer
             */
-            $scope.composers = ["Maroon5", "Eminem", "Coldplay"];
-            $scope.addItem = function () {
-                $scope.errortext = "";
-                if (!$scope.newItem) {return;}
-                if ($scope.composers.indexOf($scope.newItem) == -1) {
-                    $scope.composers.push($scope.newItem);
-                } else {
-                    $scope.errortext = "Composer is aready in list";
+            $scope.composers = [];
+            $scope.singers = [];
+            $scope.artists = [];
+            $scope.addItem = function (typeItem) {
+                /*
+                *composer
+                */
+                if(typeItem=='composer'){
+                    $scope.errortextComposer = "";
+                    if (!$scope.newComposer) {return;}
+                    if ($scope.composers.indexOf($scope.newComposer) == -1){
+                        $scope.composers.push($scope.newComposer);
+                        if($scope.artists.indexOf($scope.newComposer) == -1)
+                        {
+                            var confirmAddArtist = confirm('The artist doesn\'t exsist, you want to create and add to list?');
+                            if(confirmAddArtist){
+                                $http.post('/admin/artist', {'name': $scope.newComposer})
+                                .success(function(data){
+                                    console.log(data);
+                                    //Thêm luôn artist mới tạo vào trong danh sách search artist
+                                    $scope.artists.push($scope.newComposer);
+                                    
+                                })
+                                .error(function(data){
+                                    //Trường hợp error do thêm một artist đã tồn tại trong database sẽ không sảy ra
+                                    console.log(data);
+                                });
+                            }
+                            else{
+                                $scope.composers.pop();
+                            }
+                        }
+                    }
+                    else{
+                        $scope.errortextComposer = "Composer is aready in list";
+                    }
+                }
+                /*
+                *singer
+                */
+                else{
+                    if(typeItem=='singer'){
+                        $scope.errortextSinger = "";
+                        if (!$scope.newSinger) {return;}
+                        if ($scope.singers.indexOf($scope.newSinger) == -1){
+                            $scope.singers.push($scope.newSinger);
+                            if($scope.artists.indexOf($scope.newSinger) == -1)
+                            {
+                                var confirmAddArtist = confirm('The artist doesn\'t exsist, you want to create and add to list?');
+                                if(confirmAddArtist){
+                                    $http.post('/admin/artist', {'name': $scope.newSinger})
+                                    .success(function(data){
+                                        console.log(data);
+                                        //Thêm luôn artist mới tạo vào trong danh sách search artist
+                                        $scope.artists.push($scope.newSinger);
+                                        
+                                    })
+                                    .error(function(data){
+                                        //Trường hợp error do thêm một artist đã tồn tại trong database sẽ không sảy ra
+                                        console.log(data);
+                                    });
+                                }
+                                else{
+                                    $scope.singers.pop();
+                                }
+                            }
+                        }
+                        else{
+                            $scope.errortextSinger = "Singer is aready in list";
+                        }
+                    }
                 }
             }
-            $scope.removeItem = function (x) {
-                $scope.errortext = "";
-                $scope.composers.splice(x, 1);
+            $scope.removeItem = function (x, typeItem) {
+                /*
+                *Composer
+                */
+                if(typeItem == 'composer')
+                {
+                    $scope.errortextComposer = "";
+                    $scope.composers.splice(x, 1);
+                }
+                /*
+                *Singer
+                */
+                if(typeItem == 'singer')
+                {
+                    $scope.errortextSinger = "";
+                    $scope.singers.splice(x, 1);
+                }
             };
             /*
             *Auto-complete
             */
-            $scope.artists = [];
-            //...Add event type input to send request ???
+            //...Add event typing input to send request ???
             $('#btnAddNew').click(function(){
                 $http.get('/get_artists')
                 .success(function(data){
