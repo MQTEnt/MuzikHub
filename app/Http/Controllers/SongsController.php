@@ -8,10 +8,12 @@ use App\Http\Requests;
 use App\Http\Requests\AudioRequest;
 use App\Http\Requests\ImageRequest;
 use App\Http\Requests\ArtistRequest;
+use App\Http\Requests\CateRequest;
 use App\Song;
 use App\Audio;
 use App\Image;
 use App\Artist;
+use App\Cate;
 use App\Lib\MimeReader;
 use File;
 use Illuminate\Support\Facades\Validator;
@@ -86,5 +88,11 @@ class SongsController extends Controller
 			'name' => $request->name
 		]);
 		return 'Create a artist';
+	}
+	public function insertCate(CateRequest $request){
+		Cate::create([
+			'name' => $request->name
+		]);
+		return 'Create a category';
 	}
 }

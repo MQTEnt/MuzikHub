@@ -83,10 +83,28 @@
             $interpolateProvider.endSymbol('%>');
         });
         app.controller('songCtrl', ['$scope', 'Upload', '$timeout', '$http', function ($scope, Upload, $timeout, $http){
-            $scope.uploadAudioFile = function(audio, image){
+            $scope.currentYear = new Date().getFullYear();
+            $scope.uploadSong = function(audio, image){
                 //Delete old alert (if exsist)
                 $('#validationError ul li').remove();
                 $('#validationError').css('display', 'none');
+
+                /*
+                *Validate name of song
+                */
+                if(typeof $scope.name_song == 'undefined'){
+                    $('#validationError').css('display', 'block');
+                    $('#validationError ul').append('<li>'+'Fill name of the song'+'</li>');
+                    return 0;
+                }
+                /*
+                *Validate year composer
+                */
+                if(typeof $scope.year_composed == 'undefined'){
+                    $('#validationError').css('display', 'block');
+                    $('#validationError ul').append('<li>'+'Year composed from 1950 to now'+'</li>');
+                    return 0;
+                }
 
                 /*
                 *Alert errors when audio == null or image == null
@@ -102,66 +120,94 @@
                     return 0;
                 }
                 /*
-                ***********Upload Audio File
+                *Alert when haven't upload audio or image yet (or fomat incorrect)
                 */
-                /*
-                *Kiểm tra nếu trước đó đã upload ảnh thành công rồi thì không cần upload lại nữa
-                */
-                if(!uploadedAudio.success){
-                    audio.upload = Upload.upload({
-                        url: '/admin/song/audio_file',
-                        method: 'POST',
-                        data: {audioFile: audio}
-                    });
-                    audio.upload.then(function (response){
-                        $timeout(function (){
-                            audio.result = response.data;
-                        });
-                        uploadedAudio = response.data;
-                    }, function (response){
-                        if (response.status > 0){
-                            var errors = response.data.audioFile;
-                            $('#validationError').css('display', 'block');
-                            angular.forEach(errors, function(item, key){
-                                $('#validationError ul').append('<li>'+item+'</li>');
-                            });
-                        }
-                    }, function (evt) {
-                        // Math.min is to fix IE which reports 200% sometimes
-                        audio.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                    });
+                if(uploadedAudio.idAudio == null){
+                    $('#validationError').css('display', 'block');
+                    $('#validationError ul').append('<li>'+'You have to upload an audio or format is incorrect'+'</li>');
+                    return 0;
                 }
-                /*
-                ***********Upload Image File
-                */
-                /*
-                *Kiểm tra nếu trước đó đã upload ảnh thành công rồi thì không cần upload lại nữa
-                */
-                if(!uploadedImage.success){
-                    image.upload = Upload.upload({
-                        url: '/admin/song/image_file',
-                        method: 'POST',
-                        data: {imageFile: image}
-                    });
-                    image.upload.then(function (response){
-                        $timeout(function (){
-                            image.result = response.data;
-                        });
-                        uploadedImage = response.data;
-                    }, function (response){
-                        if (response.status > 0){
-                            var errors = response.data.imageFile;
-                            $('#validationError').css('display', 'block');
-                            angular.forEach(errors, function(item, key){
-                                $('#validationError ul').append('<li>'+item+'</li>');
-                            });
-                        }
-                    }, function (evt) {
-                        // Math.min is to fix IE which reports 200% sometimes
-                        image.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                    });
+                if(uploadedImage.idImage == null){
+                    $('#validationError').css('display', 'block');
+                    $('#validationError ul').append('<li>'+'You have to upload an image or format is incorrect'+'</li>');
+                    return 0;
                 }
+                /*** Insert song ***/
+                var dataOfSong = {
+                    'name': $scope.name_song,
+                    'composer': $scope.composers,
+                    'singer': $scope.singers,
+                    'cate': $scope.cates,
+                    'year_composed': $scope.year_composed,
+                    'lyric': $scope.lyric,
+                    'audio_id': uploadedAudio.idAudio,
+                    'image_id': uploadedImage.idImage
+                };
+                console.log(dataOfSong);
             }
+            /*
+            *Upload Audio
+            */
+            $scope.uploadAudio = function(audio){
+                //Delete old alert (if exsist)
+                $('#validationError ul li').remove();
+                $('#validationError').css('display', 'none');
+
+                audio.upload = Upload.upload({
+                    url: '/admin/song/audio_file',
+                    method: 'POST',
+                    data: {audioFile: audio}
+                });
+                audio.upload.then(function (response){
+                    $timeout(function (){
+                        audio.result = response.data;
+                    });
+                    uploadedAudio = response.data;
+                }, function (response){
+                    if (response.status > 0){
+                        var errors = response.data.audioFile;
+                        $('#validationError').css('display', 'block');
+                        angular.forEach(errors, function(item, key){
+                            $('#validationError ul').append('<li>'+item+'</li>');
+                        });
+                    }
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    audio.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            }
+            /*
+            *Upload Image
+            */
+            $scope.uploadImage = function(image){
+                //Delete old alert (if exsist)
+                $('#validationError ul li').remove();
+                $('#validationError').css('display', 'none');
+
+                image.upload = Upload.upload({
+                    url: '/admin/song/image_file',
+                    method: 'POST',
+                    data: {imageFile: image}
+                });
+                image.upload.then(function (response){
+                    $timeout(function (){
+                        image.result = response.data;
+                    });
+                    uploadedImage = response.data;
+                }, function (response){
+                    if (response.status > 0){
+                        var errors = response.data.imageFile;
+                        $('#validationError').css('display', 'block');
+                        angular.forEach(errors, function(item, key){
+                            $('#validationError ul').append('<li>'+item+'</li>');
+                        });
+                    }
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    image.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            }
+            
             /*
             *Xóa audio đã upload
             */
@@ -206,7 +252,9 @@
             */
             $scope.composers = [];
             $scope.singers = [];
-            $scope.artists = [];
+            $scope.cates = [];
+            $scope.artists = []; //Artists in Database
+            $scope.dbCates = []; //Cates in Database
             $scope.addItem = function (typeItem) {
                 /*
                 *composer
@@ -252,7 +300,7 @@
                             $scope.singers.push($scope.newSinger);
                             if($scope.artists.indexOf($scope.newSinger) == -1)
                             {
-                                var confirmAddArtist = confirm('The artist doesn\'t exsist, you want to create and add to list?');
+                                var confirmAddArtist = confirm('The artist doesn\'t exsist, do you want to create and add to list?');
                                 if(confirmAddArtist){
                                     $http.post('/admin/artist', {'name': $scope.newSinger})
                                     .success(function(data){
@@ -275,6 +323,41 @@
                             $scope.errortextSinger = "Singer is aready in list";
                         }
                     }
+                    else{
+                        /*
+                        *cate
+                        */
+                        if(typeItem == 'cate'){
+                            $scope.errortextCate = "";
+                            if (!$scope.newCate) {return;}
+                            if ($scope.cates.indexOf($scope.newCate) == -1){
+                                $scope.cates.push($scope.newCate);
+                                if($scope.dbCates.indexOf($scope.newCate) == -1)
+                                {
+                                    var confirmAddArtist = confirm('The category doesn\'t exsist, do you want to create and add to list?');
+                                    if(confirmAddArtist){
+                                        $http.post('/admin/cate', {'name': $scope.newCate})
+                                        .success(function(data){
+                                            console.log(data);
+                                            //Thêm luôn cate mới tạo vào trong danh sách search cates
+                                            $scope.dbCates.push($scope.newCate);
+                                            
+                                        })
+                                        .error(function(data){
+                                            //Trường hợp error do thêm một cate đã tồn tại trong database sẽ không sảy ra
+                                            console.log(data);
+                                        });
+                                    }
+                                    else{
+                                        $scope.cates.pop();
+                                    }
+                                }
+                            }
+                            else{
+                                $scope.errortextCate = "Category is aready in list";
+                            }
+                        }
+                    }
                 }
             }
             $scope.removeItem = function (x, typeItem) {
@@ -294,17 +377,41 @@
                     $scope.errortextSinger = "";
                     $scope.singers.splice(x, 1);
                 }
+                /*
+                *Cate
+                */
+                if(typeItem == 'cate')
+                {
+                    $scope.errortextCate = "";
+                    $scope.cates.splice(x, 1);
+                }
             };
             /*
             *Auto-complete
             */
             //...Add event typing input to send request ???
             $('#btnAddNew').click(function(){
+                /*
+                * Get list artists
+                */
                 $http.get('/get_artists')
                 .success(function(data){
                     //Loop for push name artists to $scope.artists (array)
                     for (var key in data.artists) {
                        $scope.artists.push(data.artists[key].name);
+                    }
+                })
+                .error(function(data){
+                    alert(data);
+                });
+                /*
+                * Get list cates in Database
+                */
+                $http.get('/get_cates')
+                .success(function(data){
+                    //Loop for push name cates to $scope.dbCates (array)
+                    for (var key in data.cates) {
+                       $scope.dbCates.push(data.cates[key].name);
                     }
                 })
                 .error(function(data){

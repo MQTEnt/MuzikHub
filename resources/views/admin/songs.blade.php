@@ -19,13 +19,13 @@
 							</ul>
 						</div>
 						<!-- End Display error validation -->
-						<form class="form-horizontal">
+						<form class="form-horizontal" name="form">
 							<div class="form-group">
 								<div class="col-sm-2">
 									<label class="control-label">Song's name:</label>
 								</div>
 								<div class="col-sm-9">
-									<input type="text" class="form-control">
+									<input type="text" ng-model="name_song" name="name_song" class="form-control" required>
 								</div>
 							</div>
 							<div class="form-group">
@@ -80,24 +80,16 @@
 								</div>
 								<div class="col-sm-9">
 									<label class="btn btn-default btn-file">
-										Choose category<input type="button" style="display: none;" data-toggle="modal" data-target="#categoriesModal">
+										Choose category<input type="button" style="display: none;" data-toggle="modal" data-target="#cateModal">
 									</label>
 									<!-- Categories Modal -->
-									<div class="modal fade" id="categoriesModal" role="dialog">
+									<div class="modal fade" id="cateModal" role="dialog">
 										<div class="modal-dialog modal-sm">
 											<div class="modal-content">
 												<div class="modal-body">
-													<p><a href="#"><span class="glyphicon glyphicon-plus"></span>Add New</a></p>
-													<p><a href="#"><span class="glyphicon glyphicon-refresh"></span>Refesh</a></p>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Pop</label>
-													</div>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Rock</label>
-													</div>
-													<div class="checkbox">
-														<label><input type="checkbox" value="">Rap</label>
-													</div>
+													<script>
+														$('#cateModal .modal-body').load('/templates/get_cate_quick_form.html');
+													</script>
 												</div>
 											</div>
 										</div>
@@ -110,15 +102,15 @@
 									<label class="control-label">Year composed:</label>
 								</div>
 								<div class="col-sm-9">
-									<input type="date" class="form-control">
+									<input type="number" class="form-control" ng-model="year_composed" name="year_composed" min="1950" max="<% currentYear %>">
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-2">
-									<label class="control-label">Description:</label>
+									<label class="control-label">Lyric:</label>
 								</div>
 								<div class="col-sm-9">
-									<textarea class="form-control" rows="5" id=""></textarea>
+									<textarea class="form-control" rows="5" id="" ng-model="lyric"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
@@ -131,6 +123,9 @@
 										<input id="imageFile" type="file" ngf-select ng-model="audioFile" name="audioFile" style="display: none;">
 									</label>
 									<span ng-show="audioFile != null"> <% audioFile.name %></span>
+								</div>
+								<div class="col-sm-1">
+									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-upload" ng-click="uploadAudio(audioFile)" ng-show="audioFile&&!audioFile.result"></a>
 								</div>
 								<div class="col-sm-1">
 									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-trash" ng-click="audioFile = null; removeUploadedAudio()" ng-show="audioFile"></a>
@@ -156,6 +151,9 @@
 									<span ng-show="imageFile != null"> <% imageFile.name %></span>
 								</div>
 								<div class="col-sm-1">
+									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-upload" ng-click="uploadImage(imageFile)" ng-show="imageFile&&!imageFile.result"></a>
+								</div>
+								<div class="col-sm-1">
 									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-trash" ng-click="imageFile = null; removeUploadedImage()" ng-show="imageFile"></a>
 								</div>
 								<div class="col-sm-4">
@@ -178,7 +176,7 @@
 						</form>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-success" ng-click="uploadAudioFile(audioFile, imageFile)">Insert</button>
+						<button type="button" class="btn btn-success" ng-click="uploadSong(audioFile, imageFile)">Insert</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
@@ -194,9 +192,9 @@
 				<tr>
 					<th>ID</th>
 					<th>Name</th>
+					<th>Singer</th>
+					<th>Category</th>
 					<th>Year Composed</th>
-					<th>Description</th>
-					<th>Path</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -204,9 +202,9 @@
 				<tr>
 					<td>{{$song->id}}</td>
 					<td>{{$song->name}}</td>
+					<td>{{$song->singer}}</td>
+					<td>{{$song->cate}}</td>
 					<td>{{$song->year_composed}}</td>
-					<td>{{$song->description}}</td>
-					<td>{{$song->path}}</td>
 				</tr>
 				@endforeach
 			</tbody>

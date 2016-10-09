@@ -18,6 +18,11 @@ Route::get('/get_artists',function(){
 	$artists = ['artists' => $data];
 	return $artists;
 });
+Route::get('/get_cates',function(){
+	$data = DB::table('cates')->select(['id', 'name'])->get();
+	$cates = ['cates' => $data];
+	return $cates;
+});
 Route::group(['prefix' => 'admin'], function(){
 	//Songs
 	Route::get('song', ['as' => 'song.index', 'uses' => 'SongsController@index']);
@@ -26,6 +31,7 @@ Route::group(['prefix' => 'admin'], function(){
 	Route::get('audio/delete/{idAudio}', 'SongsController@deleteAudio');
 	Route::get('image/delete/{idImage}', 'SongsController@deleteImage');
 	Route::post('artist', 'SongsController@insertArtist');
+	Route::post('cate', 'SongsController@insertCate');
 });
 
 
