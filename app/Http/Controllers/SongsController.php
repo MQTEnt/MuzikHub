@@ -8,7 +8,10 @@ use App\Http\Requests;
 use App\Http\Requests\AudioRequest;
 use App\Http\Requests\ImageRequest;
 use App\Song;
+use App\Audio;
+use App\Image;
 use App\Lib\MimeReader;
+use File;
 use Illuminate\Support\Facades\Validator;
 class SongsController extends Controller
 {
@@ -29,16 +32,22 @@ class SongsController extends Controller
 		return view('admin.songs', compact('songs'));
 	}
 	public function storeImageFile(ImageRequest $request){
-		$audioFile = $request->file('imageFile');
-		if ($audioFile!=null) {
+		$imageFile = $request->file('imageFile');
+		if ($imageFile!=null) {
 
-            $ext = $audioFile->getClientOriginalExtension();
+            $ext = $imageFile->getClientOriginalExtension();
             $nameFile = str_random(15).'.'.$ext;
         }
 		$publicDir = public_path().'/media/imgs';
 		
   		$request->file('imageFile')->move($publicDir, $nameFile);
-        return 'success';
+        
+        //Save info into database
+  		$image = new Image();
+  		$image->path = $publicDir.'/'.$nameFile;
+  		$image->save();
+  		$dataResponse = ['idImage' => $image->id, 'success' => 'true'];
+  		return $dataResponse;
 	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
@@ -50,6 +59,24 @@ class SongsController extends Controller
 		$publicDir = public_path().'/media/songs';
 		
   		$request->file('audioFile')->move($publicDir, $nameFile);
-        return 'success';
+
+        //Save info into database
+  		$audio = new Audio();
+  		$audio->path = $publicDir.'/'.$nameFile;
+  		$audio->save();
+  		$dataResponse = ['idAudio' => $audio->id, 'success' => 'true'];
+  		return $dataResponse;
+	}
+	public function deleteImage($idImage){
+		$image = Image::find($idImage);
+		File::Delete($image->path);
+		$image->delete();
+		return ['stat' => 'Deleted image'];
+	}
+	public function deleteAudio($idAudio){
+		$audio = Audio::find($idAudio);
+		File::Delete($audio->path);
+		$audio->delete();
+		return ['stat' => 'Deleted audio'];
 	}
 }

@@ -29,7 +29,7 @@ class AudioRequest extends Request
     public function messages(){
         return [
             'audioFile.required' => 'You need to choose an audio file',
-            'audioFile.audio' => 'The audio file\'s format is incorrect (recommend: mp3, wav)' 
+            'audioFile.audio' => 'The audio file\'s format is incorrect (recommend: mp3, wav)'
         ];
     }
 }

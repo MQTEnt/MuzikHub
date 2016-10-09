@@ -8,6 +8,10 @@
     <meta name="author" content="">
     <title>MuzikHub</title>
 
+
+    <!-- Custom CSS temp -->
+
+
     <!-- Bootstrap Core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 
@@ -34,6 +38,10 @@
 
         <!-- AngularJS -->
         <script src="/js/angular.min.js"></script>
+
+        <!-- Angular Upload file -->
+        <script src="/js/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
+        <script src="/js/ng-file-upload.min.js"></script>
 
         <!-- Auto-complete module -->
         <script src="/js/bootstrap3-typeahead.js"></script>
@@ -65,79 +73,134 @@
         <!-- Custom Theme JavaScript -->
         <script src="/js/sb-admin-2.min.js"></script>
         <script>
-        var app = angular.module('songApp', ['bootstrap3-typeahead'], function($interpolateProvider) {
+        var uploadedAudio = {idAudio: null, success: false};
+        var uploadedImage = {idImage: null, success: false};
+        var app = angular.module('songApp', ['bootstrap3-typeahead', 'ngFileUpload'], function($interpolateProvider) {
             //'bootstrap3-typeahead' is a dependent module for auto-complete feature
+            //'ngFileUpload' is a dependent module for upload file and display progress
             //Using <% %> instead {{}} (2 way binding)
             $interpolateProvider.startSymbol('<%');
             $interpolateProvider.endSymbol('%>');
         });
-        app.controller('songCtrl',function($scope, $http){
-            var af = new FormData(); //Audio file
-            var imgf = new FormData(); //Image file
-            /*
-            *Get audio file
-            */
-            $scope.getAudioFile = function(files){
-                af.append("audioFile", files[0]);
-                //Display file name
-                $('#audioFileName').text(files[0].name);
-            }
-            /*
-            *Get image file
-            */
-            $scope.getImageFile = function(files){
-                imgf.append("imageFile", files[0]);
-                //Display image file
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#imgContent')
-                    .attr('src', e.target.result)
-                    .width(150)
-                    .height(150);
-                };
-                reader.readAsDataURL(files[0]);
-            }
-            /*
-            *Store song
-            */
-            $scope.storeAudioFile = function(){
+        app.controller('songCtrl', ['$scope', 'Upload', '$timeout', '$http', function ($scope, Upload, $timeout, $http){
+            $scope.uploadAudioFile = function(audio, image){
                 //Delete old alert (if exsist)
                 $('#validationError ul li').remove();
+                $('#validationError').css('display', 'none');
+
                 /*
-                *Store image file
+                *Alert errors when audio == null or image == null
                 */
-                $http.post('/admin/song/image_file', imgf,{
-                    withCredentials: true,
-                    headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
-                    transformRequest: angular.identity
-                }).success(function(data){
-                    console.log(data);
-                })
-                .error(function(data){
+                if(typeof audio == 'undefined' || audio == null){
                     $('#validationError').css('display', 'block');
-                    //Display new alert
-                    angular.forEach(data, function(item, key){
-                        $('#validationError ul').append('<li>'+item+'</li>');
-                    });
-                });
+                    $('#validationError ul').append('<li>'+'You have to choose an audio'+'</li>');
+                    return 0;
+                }
+                if(typeof image == 'undefined' || image == null){
+                    $('#validationError').css('display', 'block');
+                    $('#validationError ul').append('<li>'+'You have to choose an image'+'</li>');
+                    return 0;
+                }
                 /*
-                *Store audio file
+                ***********Upload Audio File
                 */
-                $http.post('/admin/song/audio_file', af,{
-                    withCredentials: true,
-                    headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
-                    transformRequest: angular.identity
-                }).success(function(data){
-                    console.log(data);
-                })
-                .error(function(data){
-                    $('#validationError').css('display', 'block');
-                    //Display new alert
-                    angular.forEach(data, function(item, key){
-                        $('#validationError ul').append('<li>'+item+'</li>');
+                /*
+                *Kiểm tra nếu trước đó đã upload ảnh thành công rồi thì không cần upload lại nữa
+                */
+                if(!uploadedAudio.success){
+                    audio.upload = Upload.upload({
+                        url: '/admin/song/audio_file',
+                        method: 'POST',
+                        data: {audioFile: audio}
                     });
-                });
-            };
+                    audio.upload.then(function (response){
+                        $timeout(function (){
+                            audio.result = response.data;
+                        });
+                        uploadedAudio = response.data;
+                    }, function (response){
+                        if (response.status > 0){
+                            var errors = response.data.audioFile;
+                            $('#validationError').css('display', 'block');
+                            angular.forEach(errors, function(item, key){
+                                $('#validationError ul').append('<li>'+item+'</li>');
+                            });
+                        }
+                    }, function (evt) {
+                        // Math.min is to fix IE which reports 200% sometimes
+                        audio.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    });
+                }
+                /*
+                ***********Upload Image File
+                */
+                /*
+                *Kiểm tra nếu trước đó đã upload ảnh thành công rồi thì không cần upload lại nữa
+                */
+                if(!uploadedImage.success){
+                    image.upload = Upload.upload({
+                        url: '/admin/song/image_file',
+                        method: 'POST',
+                        data: {imageFile: image}
+                    });
+                    image.upload.then(function (response){
+                        $timeout(function (){
+                            image.result = response.data;
+                        });
+                        uploadedImage = response.data;
+                    }, function (response){
+                        if (response.status > 0){
+                            var errors = response.data.imageFile;
+                            $('#validationError').css('display', 'block');
+                            angular.forEach(errors, function(item, key){
+                                $('#validationError ul').append('<li>'+item+'</li>');
+                            });
+                        }
+                    }, function (evt) {
+                        // Math.min is to fix IE which reports 200% sometimes
+                        image.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    });
+                }
+            }
+            /*
+            *Xóa audio đã upload
+            */
+            $scope.removeUploadedAudio = function(file){
+                if(uploadedAudio.success){
+                    //alert('Xóa audio đã upload');
+                    $http.get('/admin/audio/delete/'+uploadedAudio.idAudio)
+                    .success(function(data){
+                        alert(data.stat);
+                        uploadedAudio = {idAudio: null, success: false};
+                    })
+                    .error(function(data){
+                        alert(data);
+                    });
+                }
+                else
+                {
+                    //alert('Xóa audio chưa upload');
+                }
+            }
+
+            /*
+            *Xóa ảnh đã upload
+            */
+            $scope.removeUploadedImage = function(file){
+                if(uploadedImage.success){
+                    $http.get('/admin/image/delete/'+uploadedImage.idImage)
+                    .success(function(data){
+                        alert(data.stat);
+                        uploadedImage = {idImage: null, success: false};
+                    })
+                    .error(function(data){
+                        alert(data);
+                    });
+                }
+                else
+                {
+                }
+            }
             /*
             *Quick search or add new composer
             */
@@ -158,18 +221,21 @@
             /*
             *Auto-complete
             */
-            $scope.states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-            'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-            'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-            'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-            'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-            'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-            'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-            'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-            'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-            ];
-            $scope.value = '';
-        });
+            $scope.artists = [];
+            //...Add event type input to send request ???
+            $('#btnAddNew').click(function(){
+                $http.get('/get_artists')
+                .success(function(data){
+                    //Loop for push name artists to $scope.artists (array)
+                    for (var key in data.artists) {
+                       $scope.artists.push(data.artists[key].name);
+                    }
+                })
+                .error(function(data){
+                    alert(data);
+                });
+            });
+        }]);
 </script>
 </body>
 

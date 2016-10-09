@@ -2,7 +2,7 @@
 @section('body.content')
 <div class="row" ng-app="songApp" ng-controller="songCtrl">
 	<div class="col-sm-12">
-		<button id="btnAddNew" class="btn btn-success" data-toggle="modal" data-target="#songModal">Add New</button>
+		<button class="btn btn-success" data-toggle="modal" data-target="#songModal">Add New</button>
 		<!-- Modal -->
 		<div class="modal fade" id="songModal" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -14,6 +14,7 @@
 					<div class="modal-body">
 						<!-- Display error validation -->
 						<div id="validationError" class="alert alert-danger">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 							<strong>Have some errors:</strong>
 							<ul>
 							</ul>
@@ -131,62 +132,30 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-2">
-									<label class="control-label">Audio file:</label>
+									<label class="control-label">Audio:</label>
 								</div>
-								<div class="col-sm-2">
-									<label class="btn btn-default btn-file form-control" ng-show="audioFile == null">
-										Upload audio
-										<input id="imageFile" type="file" ngf-select ng-model="audioFile" name="audioFile" style="display: none;">
+								<div class="col-sm-9">
+									<label class="btn btn-default btn-file">
+										Upload audio<input id="audioFile" name="audioFile" type="file" style="display: none;" onchange="angular.element(this).scope().getAudioFile(this.files)">
 									</label>
-									<span ng-show="audioFile != null"> <% audioFile.name %></span>
-								</div>
-								<div class="col-sm-1">
-									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-trash" ng-click="audioFile = null; removeUploadedAudio()" ng-show="audioFile"></a>
-								</div>
-								<div class="col-sm-4">
-									<div class="progress" ng-show="audioFile.progress >= 0">
-										<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="<%audioFile.progress%>" aria-valuemin="0" aria-valuemax="100" style="width: <%audioFile.progress%>%">
-											<span><% audioFile.progress + '%' %></span>
-											<span ng-show="audioFile.result">Upload Successful</span>
-										</div>
-									</div>
+									<p id="audioFileName"></p>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-2">
-									<label class="control-label">Image file:</label>
+									<label class="control-label">Image:</label>
 								</div>
-								<div class="col-sm-2">
-									<label class="btn btn-default btn-file form-control" ng-show="imageFile == null">
-										Upload image
-										<input id="imageFile" type="file" ngf-select ng-model="imageFile" name="imageFile" style="display: none;">
+								<div class="col-sm-9">
+									<label class="btn btn-default btn-file">
+										Upload image<input id="imageFile" type="file" style="display: none;" onchange="angular.element(this).scope().getImageFile(this.files)">
 									</label>
-									<span ng-show="imageFile != null"> <% imageFile.name %></span>
-								</div>
-								<div class="col-sm-1">
-									<a style="font-size: 125%; text-decoration: none;" class="glyphicon glyphicon-trash" ng-click="imageFile = null; removeUploadedImage()" ng-show="imageFile"></a>
-								</div>
-								<div class="col-sm-4">
-									<div class="progress" ng-show="imageFile.progress >= 0">
-										<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="<%imageFile.progress%>" aria-valuemin="0" aria-valuemax="100" style="width: <%imageFile.progress%>%">
-											<span><% imageFile.progress + '%' %></span>
-											<span ng-show="imageFile.result">Upload Successful</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-2">
-									<label class="control-label"></label>
-								</div>
-								<div class="col-sm-2" ng-show="imageFile != null">
-									<img style="width: 150px; height: 150px;" ngf-thumbnail="imageFile" alt="" id="imgContent">
+									<img src="" alt="" id="imgContent">
 								</div>
 							</div>
 						</form>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-success" ng-click="uploadAudioFile(audioFile, imageFile)">Insert</button>
+						<button type="button" class="btn btn-success" ng-click="storeAudioFile()">Insert</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>

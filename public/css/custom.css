@@ -11,4 +11,5 @@
 #imgContent{
 	display: block;
 	margin-top: 10px;
+	box-shadow: 5px 5px 2.5px grey;
 }
