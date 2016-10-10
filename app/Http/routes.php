@@ -30,6 +30,7 @@ Route::group(['prefix' => 'admin'], function(){
 	Route::post('song/image_file', ['as' => 'song.storeImageFile', 'uses' => 'SongsController@storeImageFile']);
 	Route::post('song', ['as' => 'song.store', 'uses' => 'SongsController@store']);
 	Route::get('song/{idSong}', ['as' => 'song.edit', 'uses' => 'SongsController@edit']);
+	Route::post('song/{idSong}', ['as' => 'song.update', 'uses' => 'SongsController@update']);
 	Route::get('audio/delete/{idAudio}', 'SongsController@deleteAudio');
 	Route::get('image/delete/{idImage}', 'SongsController@deleteImage');
 	Route::post('artist', 'SongsController@insertArtist');

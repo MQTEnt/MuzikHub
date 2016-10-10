@@ -52,6 +52,20 @@ class SongsController extends Controller
 		$song = Song::find($id);
 		return $song;
 	}
+	public function update($id, Request $request){
+		$song = Song::find($id);
+		$song->update([
+			'name' => $request->name,
+			'year_composed' => $request->year_composed,
+			'lyric' => $request->lyric,
+			'cate' => $request->cate,
+			'singer' => $request->singer,
+			'composer' => $request->composer,
+			'audio_id' => $request->audio_id,
+			'image_id' => $request->image_id
+		]);
+		return "success";
+	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
 		if ($audioFile!=null) {
@@ -65,7 +79,7 @@ class SongsController extends Controller
 
         //Save info into database
   		$audio = new Audio();
-  		$audio->path = $publicDir.'/'.$nameFile;
+  		$audio->path = '/media/songs/'.$nameFile;
   		$audio->save();
   		$dataResponse = ['idAudio' => $audio->id, 'success' => 'true'];
   		return $dataResponse;
@@ -83,7 +97,7 @@ class SongsController extends Controller
         
         //Save info into database
   		$image = new Image();
-  		$image->path = $publicDir.'/'.$nameFile;
+  		$image->path = '/media/imgs/'.$nameFile;
   		$image->save();
   		$dataResponse = ['idImage' => $image->id, 'success' => 'true'];
   		return $dataResponse;

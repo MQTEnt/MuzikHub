@@ -76,6 +76,7 @@
         var mode = "Add";
         var uploadedAudio = {idAudio: null, success: false};
         var uploadedImage = {idImage: null, success: false};
+        var selectedSong;
         var app = angular.module('songApp', ['bootstrap3-typeahead', 'ngFileUpload'], function($interpolateProvider) {
             //'bootstrap3-typeahead' is a dependent module for auto-complete feature
             //'ngFileUpload' is a dependent module for upload file and display progress
@@ -107,18 +108,32 @@
                     return 0;
                 }
 
-                /*
-                *Alert errors when audio == null or image == null
-                */
-                if(typeof audio == 'undefined' || audio == null){
-                    $('#validationError').css('display', 'block');
-                    $('#validationError ul').append('<li>'+'You have to choose an audio'+'</li>');
-                    return 0;
+                if(mode == 'Add'){
+                    /*
+                    *Alert errors when audio == null or image == null
+                    */
+                    if(typeof audio == 'undefined' || audio == null){
+                        $('#validationError').css('display', 'block');
+                        $('#validationError ul').append('<li>'+'You have to choose an audio'+'</li>');
+                        return 0;
+                    }
+                    if(typeof image == 'undefined' || image == null){
+                        $('#validationError').css('display', 'block');
+                        $('#validationError ul').append('<li>'+'You have to choose an image'+'</li>');
+                        return 0;
+                    }
                 }
-                if(typeof image == 'undefined' || image == null){
-                    $('#validationError').css('display', 'block');
-                    $('#validationError ul').append('<li>'+'You have to choose an image'+'</li>');
-                    return 0;
+                else{
+                    if((typeof audio == 'undefined' || audio == null) && uploadedAudio.idAudio == null ){
+                        $('#validationError').css('display', 'block');
+                        $('#validationError ul').append('<li>'+'You have to choose an audio'+'</li>');
+                        return 0;
+                    }
+                    if((typeof image == 'undefined' || image == null) && uploadedImage.idImage == null ){
+                        $('#validationError').css('display', 'block');
+                        $('#validationError ul').append('<li>'+'You have to choose an image'+'</li>');
+                        return 0;
+                    }
                 }
                 /*
                 *Alert when haven't upload audio or image yet (or fomat incorrect)
@@ -133,26 +148,62 @@
                     $('#validationError ul').append('<li>'+'You have to upload an image or format is incorrect'+'</li>');
                     return 0;
                 }
-                /*** Insert song ***/
-                var dataOfSong = {
-                    'name': $scope.name_song,
-                    'composer': $scope.composers.join(),
-                    'singer': $scope.singers.join(),
-                    'cate': $scope.cates.join(),
-                    'year_composed': $scope.year_composed,
-                    'lyric': $scope.lyric,
-                    'audio_id': uploadedAudio.idAudio,
-                    'image_id': uploadedImage.idImage
-                };
-                console.log(dataOfSong);
-                $http.post('/admin/song', dataOfSong)
-                .success(function(res){
-                    alert('You added a new song successfully');
-                    location.reload();
-                })
-                .error(function(res){
-                    console.log(res)
-                });
+
+                /*** Insert song / Update song ***/
+                /*
+                *
+                * 
+                *
+                *
+                */
+                if(mode == 'Add'){
+                    var dataOfSong = {
+                        'name': $scope.name_song,
+                        'composer': $scope.composers.join(),
+                        'singer': $scope.singers.join(),
+                        'cate': $scope.cates.join(),
+                        'year_composed': $scope.year_composed,
+                        'lyric': $scope.lyric,
+                        'audio_id': uploadedAudio.idAudio,
+                        'image_id': uploadedImage.idImage
+                    };
+                    console.log(dataOfSong);
+                    $http.post('/admin/song', dataOfSong)
+                    .success(function(res){
+                        alert('You added a new song successfully');
+                        //uploadedAudio = {idAudio: null, success: false};
+                        //uploadedImage = {idImage: null, success: false};
+                        location.reload();
+                    })
+                    .error(function(res){
+                        console.log(res)
+                    });
+                }
+                else{
+                    if(mode == 'Edit'){
+                        var dataOfSong = {
+                            'name': $scope.name_song,
+                            'composer': $scope.composers.join(),
+                            'singer': $scope.singers.join(),
+                            'cate': $scope.cates.join(),
+                            'year_composed': $scope.year_composed,
+                            'lyric': $scope.lyric,
+                            'audio_id': uploadedAudio.idAudio,
+                            'image_id': uploadedImage.idImage
+                        };
+                        console.log(dataOfSong);
+                        $http.post('/admin/song/'+selectedSong.id, dataOfSong)
+                        .success(function(res){
+                            alert('The song has been updated successfully');
+                            //uploadedAudio = {idAudio: null, success: false};
+                            //uploadedImage = {idImage: null, success: false};
+                            location.reload();
+                        })
+                        .error(function(res){
+                            console.log(res)
+                        });
+                    }
+                }
             }
             /*
             *Upload Audio
@@ -161,6 +212,22 @@
                 //Delete old alert (if exsist)
                 $('#validationError ul li').remove();
                 $('#validationError').css('display', 'none');
+                //Xóa audio hiện thời của bài hát để tiến hành upload audio mới
+                if(uploadedAudio.idAudio != null){
+                    if(confirm('Do you want to delete current audio?'))
+                    {
+                        $http.get('/admin/audio/delete/'+uploadedAudio.idAudio)
+                        .success(function(data){
+                            console.log(data.stat);
+                            uploadedAudio = {idAudio: null, success: false};
+                        })
+                        .error(function(data){
+                            alert(data);
+                        });
+                    }
+                    else
+                        return 0;
+                }
 
                 audio.upload = Upload.upload({
                     url: '/admin/song/audio_file',
@@ -192,7 +259,22 @@
                 //Delete old alert (if exsist)
                 $('#validationError ul li').remove();
                 $('#validationError').css('display', 'none');
-
+                //Xóa image hiện thời của bài hát để tiến hành upload image mới
+                if(uploadedImage.idImage != null){
+                    if(confirm('Do you want to delete current image?'))
+                    {
+                        $http.get('/admin/image/delete/'+uploadedImage.idImage)
+                        .success(function(data){
+                            console.log(data.stat);
+                            uploadedImage = {idImage: null, success: false};
+                        })
+                        .error(function(data){
+                            alert(data);
+                        });
+                    }
+                    else
+                        return 0;
+                }
                 image.upload = Upload.upload({
                     url: '/admin/song/image_file',
                     method: 'POST',
@@ -220,7 +302,7 @@
             /*
             *Xóa audio đã upload
             */
-            $scope.removeUploadedAudio = function(file){
+            $scope.removeUploadedAudio = function(){
                 if(uploadedAudio.success){
                     //alert('Xóa audio đã upload');
                     $http.get('/admin/audio/delete/'+uploadedAudio.idAudio)
@@ -241,7 +323,7 @@
             /*
             *Xóa ảnh đã upload
             */
-            $scope.removeUploadedImage = function(file){
+            $scope.removeUploadedImage = function(){
                 if(uploadedImage.success){
                     $http.get('/admin/image/delete/'+uploadedImage.idImage)
                     .success(function(data){
@@ -404,6 +486,17 @@
                 mode = "Add";
                 $('.main-title').text('Add new song');
                 $('#btnInsertOrUpdate').text('Insert');
+                //Reset input
+                $scope.name_song = "";
+                $scope.composers = [];
+                $scope.singers = [];
+                $scope.cates = [];
+                $scope.year_composed = ""
+                $scope.lyric = "";
+                uploadedAudio = {idAudio: null, success: false};
+                uploadedImage = {idImage: null, success: false};
+                $scope.artists = [];
+                $scope.dbCates = [];
                 /*
                 * Get list artists
                 */
@@ -440,7 +533,6 @@
                 $('.main-title').text('Edit song');
                 $('#btnInsertOrUpdate').text('Update');
 
-                var selectedSong;
                 $http.get('/admin/song/'+idSong)
                 .success(function(res){
                     selectedSong = res;
@@ -452,13 +544,41 @@
                     $scope.year_composed = selectedSong.year_composed;
                     $scope.lyric = selectedSong.lyric;
                     uploadedAudio = {idAudio: selectedSong.audio_id, success: true};
-                    uploadedImage = {idAudio: selectedSong.image_id, success: true};
+                    uploadedImage = {idImage: selectedSong.image_id, success: true};
                     //Display modal
                     $('#songModal').modal('show');
                     //function update (reset inputs after update)
                 })
                 .error(function(res){
                     console.log(res);
+                });
+
+
+                /*
+                * Get list artists
+                */
+                $http.get('/get_artists')
+                .success(function(data){
+                    //Loop for push name artists to $scope.artists (array)
+                    for (var key in data.artists) {
+                       $scope.artists.push(data.artists[key].name);
+                    }
+                })
+                .error(function(data){
+                    alert(data);
+                });
+                /*
+                * Get list cates in Database
+                */
+                $http.get('/get_cates')
+                .success(function(data){
+                    //Loop for push name cates to $scope.dbCates (array)
+                    for (var key in data.cates) {
+                       $scope.dbCates.push(data.cates[key].name);
+                    }
+                })
+                .error(function(data){
+                    alert(data);
                 });
             }
         }]);
