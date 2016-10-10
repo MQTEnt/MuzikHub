@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin'], function(){
 	Route::get('song', ['as' => 'song.index', 'uses' => 'SongsController@index']);
 	Route::post('song/audio_file', ['as' => 'song.storeAudioFile', 'uses' => 'SongsController@storeAudioFile']);
 	Route::post('song/image_file', ['as' => 'song.storeImageFile', 'uses' => 'SongsController@storeImageFile']);
+	Route::post('song', ['as' => 'song.store', 'uses' => 'SongsController@store']);
 	Route::get('audio/delete/{idAudio}', 'SongsController@deleteAudio');
 	Route::get('image/delete/{idImage}', 'SongsController@deleteImage');
 	Route::post('artist', 'SongsController@insertArtist');

@@ -135,15 +135,23 @@
                 /*** Insert song ***/
                 var dataOfSong = {
                     'name': $scope.name_song,
-                    'composer': $scope.composers,
-                    'singer': $scope.singers,
-                    'cate': $scope.cates,
+                    'composer': $scope.composers.join(),
+                    'singer': $scope.singers.join(),
+                    'cate': $scope.cates.join(),
                     'year_composed': $scope.year_composed,
                     'lyric': $scope.lyric,
                     'audio_id': uploadedAudio.idAudio,
                     'image_id': uploadedImage.idImage
                 };
                 console.log(dataOfSong);
+                $http.post('/admin/song', dataOfSong)
+                .success(function(res){
+                    alert('You added a new song successfully');
+                    location.reload();
+                })
+                .error(function(res){
+                    console.log(res)
+                });
             }
             /*
             *Upload Audio

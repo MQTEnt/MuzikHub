@@ -35,6 +35,19 @@ class SongsController extends Controller
 		$songs = Song::all();
 		return view('admin.songs', compact('songs'));
 	}
+	public function store(Request $request){
+		Song::create([
+			'name' => $request->name,
+			'year_composed' => $request->year_composed,
+			'lyric' => $request->lyric,
+			'cate' => $request->cate,
+			'singer' => $request->singer,
+			'composer' => $request->composer,
+			'audio_id' => $request->audio_id,
+			'image_id' => $request->image_id
+		]);
+		return "success";
+	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
 		if ($audioFile!=null) {
