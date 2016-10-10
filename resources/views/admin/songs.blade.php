@@ -25,7 +25,7 @@
 									<label class="control-label">Song's name:</label>
 								</div>
 								<div class="col-sm-9">
-									<input type="text" ng-model="name_song" name="name_song" class="form-control" required>
+									<input type="text" ng-model="name_song" name="name_song" class="form-control">
 								</div>
 							</div>
 							<div class="form-group">
@@ -37,9 +37,13 @@
 										Choose composer<input type="button" style="display: none;" data-toggle="modal" data-target="#composerModal">
 									</label>
 									<!-- Composer Modal -->
-									<div class="modal fade" id="composerModal" role="dialog">
+									<div class="modal fade sub-modal" id="composerModal" role="dialog">
 										<div class="modal-dialog modal-sm">
 											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close close-sub-modal">&times;</button>
+													<h4 class="modal-title">List composers</h4>
+												</div>
 												<div class="modal-body">
 													<script>
 														$('#composerModal .modal-body').load('/templates/get_composer_quick_form.html');
@@ -60,9 +64,13 @@
 										Choose singer<input type="button" style="display: none;" data-toggle="modal" data-target="#singerModal">
 									</label>
 									<!-- Singer Modal -->
-									<div class="modal fade" id="singerModal" role="dialog">
+									<div class="modal fade sub-modal" id="singerModal" role="dialog">
 										<div class="modal-dialog modal-sm">
 											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close close-sub-modal">&times;</button>
+													<h4 class="modal-title">List singers</h4>
+												</div>
 												<div class="modal-body">
 													<script>
 														$('#singerModal .modal-body').load('/templates/get_singer_quick_form.html');
@@ -83,9 +91,13 @@
 										Choose category<input type="button" style="display: none;" data-toggle="modal" data-target="#cateModal">
 									</label>
 									<!-- Categories Modal -->
-									<div class="modal fade" id="cateModal" role="dialog">
+									<div class="modal fade sub-modal" id="cateModal" role="dialog">
 										<div class="modal-dialog modal-sm">
 											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close close-sub-modal">&times;</button>
+													<h4 class="modal-title">List categories</h4>
+												</div>
 												<div class="modal-body">
 													<script>
 														$('#cateModal .modal-body').load('/templates/get_cate_quick_form.html');

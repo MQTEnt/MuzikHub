@@ -428,6 +428,13 @@
             });
         }]);
 </script>
+<script>
+    $(document).ready(function(){
+        $('.close-sub-modal').click(function(){
+            $('.sub-modal').modal('hide');
+        });
+    })
+</script>
 </body>
 
 </html>
