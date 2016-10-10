@@ -1,6 +1,6 @@
 @extends('admin.layout.master')
 @section('body.content')
-<div class="row">
+<div class="row"> 
 	<div class="col-sm-12">
 		<button id="btnAddNew" class="btn btn-success" data-toggle="modal" data-target="#songModal">Add New</button>
 		<!-- Modal -->
@@ -189,6 +189,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" id="btnInsertOrUpdate" class="btn btn-success" ng-click="uploadSong(audioFile, imageFile)">Insert</button>
+						<button type="button" id="btnDelete" class="btn btn-danger" ng-click="deleteSong()">Delete</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>

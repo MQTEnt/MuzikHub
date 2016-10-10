@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>MuzikHub</title>
-
-
+    <title>MuzikHub</title> 
     <!-- Custom CSS temp -->
 
 
@@ -94,7 +92,7 @@
                 /*
                 *Validate name of song
                 */
-                if(typeof $scope.name_song == 'undefined'){
+                if($scope.name_song == ""){
                     $('#validationError').css('display', 'block');
                     $('#validationError ul').append('<li>'+'Fill name of the song'+'</li>');
                     return 0;
@@ -102,7 +100,7 @@
                 /*
                 *Validate year composer
                 */
-                if(typeof $scope.year_composed == 'undefined'){
+                if($scope.year_composed == ""){
                     $('#validationError').css('display', 'block');
                     $('#validationError ul').append('<li>'+'Year composed from 1950 to now'+'</li>');
                     return 0;
@@ -484,6 +482,7 @@
             $('#btnAddNew').click(function(){
                 //Set mode
                 mode = "Add";
+                $('#btnDelete').hide();
                 $('.main-title').text('Add new song');
                 $('#btnInsertOrUpdate').text('Insert');
                 //Reset input
@@ -495,8 +494,6 @@
                 $scope.lyric = "";
                 uploadedAudio = {idAudio: null, success: false};
                 uploadedImage = {idImage: null, success: false};
-                $scope.artists = [];
-                $scope.dbCates = [];
                 /*
                 * Get list artists
                 */
@@ -530,6 +527,7 @@
             $scope.editSong = function(idSong){
                 //Set mode 
                 mode = "Edit"
+                $('#btnDelete').show();
                 $('.main-title').text('Edit song');
                 $('#btnInsertOrUpdate').text('Update');
 
@@ -580,6 +578,36 @@
                 .error(function(data){
                     alert(data);
                 });
+            }
+            /*
+            *********Delete song
+            */
+            $scope.deleteSong = function(){
+                if(confirm('Do you want to delete this song?')){
+                    $http.get('/admin/audio/delete/'+uploadedAudio.idAudio)
+                    .success(function(data){
+                        uploadedAudio = {idAudio: null, success: false};
+                        $http.get('/admin/image/delete/'+uploadedImage.idImage)
+                        .success(function(data){
+                            uploadedImage = {idImage: null, success: false};
+                            $http.get('/admin/song/delete/'+selectedSong.id)
+                            .success(function(res){
+                                console.log(res);
+                                alert('Delete successfully');
+                                location.reload();
+                            })
+                            .error(function(res){
+                                alert(res)
+                            });
+                        })
+                        .error(function(data){
+                            alert(data);
+                        });
+                    })
+                    .error(function(data){
+                        alert(data);
+                    });
+                }
             }
         }]);
 </script>

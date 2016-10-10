@@ -66,6 +66,11 @@ class SongsController extends Controller
 		]);
 		return "success";
 	}
+	public function delete($id){
+		$song = Song::find($id);
+		$song->delete();
+		return 'Delete success';
+	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
 		if ($audioFile!=null) {
@@ -104,13 +109,13 @@ class SongsController extends Controller
 	}
 	public function deleteAudio($idAudio){
 		$audio = Audio::find($idAudio);
-		File::Delete($audio->path);
+		File::Delete(public_path().'/'.$audio->path);
 		$audio->delete();
 		return ['stat' => 'Deleted audio'];
 	}
 	public function deleteImage($idImage){
 		$image = Image::find($idImage);
-		File::Delete($image->path);
+		File::Delete(public_path().'/'.$image->path);
 		$image->delete();
 		return ['stat' => 'Deleted image'];
 	}
