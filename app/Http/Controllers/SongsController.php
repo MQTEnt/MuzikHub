@@ -48,6 +48,10 @@ class SongsController extends Controller
 		]);
 		return "success";
 	}
+	public function edit($id){
+		$song = Song::find($id);
+		return $song;
+	}
 	public function storeAudioFile(AudioRequest $request){
 		$audioFile = $request->file('audioFile');
 		if ($audioFile!=null) {

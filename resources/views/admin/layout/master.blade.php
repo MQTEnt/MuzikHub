@@ -56,7 +56,7 @@
             @include('admin.partial.navbar')
             <!-- End Navigation -->
 
-            <div id="page-wrapper">
+            <div id="page-wrapper" ng-app="songApp" ng-controller="songCtrl">
                 @yield('body.content')
             </div>
             <!-- /#page-wrapper -->
@@ -73,6 +73,7 @@
         <!-- Custom Theme JavaScript -->
         <script src="/js/sb-admin-2.min.js"></script>
         <script>
+        var mode = "Add";
         var uploadedAudio = {idAudio: null, success: false};
         var uploadedImage = {idImage: null, success: false};
         var app = angular.module('songApp', ['bootstrap3-typeahead', 'ngFileUpload'], function($interpolateProvider) {
@@ -399,6 +400,10 @@
             */
             //...Add event typing input to send request ???
             $('#btnAddNew').click(function(){
+                //Set mode
+                mode = "Add";
+                $('.main-title').text('Add new song');
+                $('#btnInsertOrUpdate').text('Insert');
                 /*
                 * Get list artists
                 */
@@ -426,6 +431,36 @@
                     alert(data);
                 });
             });
+            /*
+            ***Edit song
+            */
+            $scope.editSong = function(idSong){
+                //Set mode 
+                mode = "Edit"
+                $('.main-title').text('Edit song');
+                $('#btnInsertOrUpdate').text('Update');
+
+                var selectedSong;
+                $http.get('/admin/song/'+idSong)
+                .success(function(res){
+                    selectedSong = res;
+                    console.log(selectedSong);
+                    $scope.name_song = selectedSong.name;
+                    $scope.composers = selectedSong.composer.split(',');
+                    $scope.singers = selectedSong.singer.split(',');
+                    $scope.cates = selectedSong.cate.split(',');
+                    $scope.year_composed = selectedSong.year_composed;
+                    $scope.lyric = selectedSong.lyric;
+                    uploadedAudio = {idAudio: selectedSong.audio_id, success: true};
+                    uploadedImage = {idAudio: selectedSong.image_id, success: true};
+                    //Display modal
+                    $('#songModal').modal('show');
+                    //function update (reset inputs after update)
+                })
+                .error(function(res){
+                    console.log(res);
+                });
+            }
         }]);
 </script>
 <script>
