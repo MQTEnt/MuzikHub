@@ -13,3 +13,28 @@
 	margin-top: 10px;
 	box-shadow: 5px 5px 2.5px grey;
 }
+.img-single{
+	width: 150px;
+	height: 150px;
+}
+.audio-player{
+	margin: 10px 0;
+}
+.btn-single{
+	margin-bottom: 10px;
+}
+.lyric{
+	margin-top: 20px;
+	overflow-y: scroll;
+	height: 200px;
+	border-left: solid 1px grey;
+	padding-left: 10px;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}

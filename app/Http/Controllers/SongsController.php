@@ -131,4 +131,10 @@ class SongsController extends Controller
 		]);
 		return 'Create a category';
 	}
+	public function getSingle($id){
+		$single = Song::find($id);
+		$img = Image::find($single->image_id);
+		$audio = Audio::find($single->audio_id);
+		return view('page.single', compact(['single', 'img', 'audio']));
+	}
 }
