@@ -111,7 +111,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-2">
-									<label class="control-label">Year composed:</label>
+									<label class="control-label">Year:</label>
 								</div>
 								<div class="col-sm-9">
 									<input type="number" class="form-control" ng-model="year_composed" name="year_composed" min="1950" max="<% currentYear %>">
@@ -207,7 +207,7 @@
 					<th>Name</th>
 					<th>Singer</th>
 					<th>Category</th>
-					<th>Year Composed</th>
+					<th>Year</th>
 				</tr>
 			</thead>
 			<tbody>

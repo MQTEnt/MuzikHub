@@ -30,3 +30,6 @@ img.single-picture{
 .input-group{
 	margin: 0;
 }
+#list-artist .row{
+	margin-bottom: 10px;
+}

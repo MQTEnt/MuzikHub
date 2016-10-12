@@ -14,6 +14,7 @@ use App\Audio;
 use App\Image;
 use App\Artist;
 use App\Cate;
+use App\Comment;
 use App\Lib\MimeReader;
 use File;
 use Illuminate\Support\Facades\Validator;
@@ -135,6 +136,26 @@ class SongsController extends Controller
 		$single = Song::find($id);
 		$img = Image::find($single->image_id);
 		$audio = Audio::find($single->audio_id);
-		return view('page.single', compact(['single', 'img', 'audio']));
+		$comments = Comment::limit(5)->select('content', 'created_at')->where('song_id', $single->id)->orderBy("id", "DESC")->get();
+		return view('page.single', compact(['single', 'img', 'audio', 'comments']));
+	}
+	public function like($id){
+		$single = Song::find($id);
+		$single->like = $single->like + 1;
+		$single->save();
+		return "Like successfully";
+	}
+	public function download($id){
+		$single = Song::find($id);
+		$single->download = $single->download + 1;
+		$single->save();
+		return "Download successfully";
+	}
+	public function comment($id, Request $request){
+		Comment::create([
+			'content' => $request->content,
+			'song_id' => $request->song_id
+		]);
+		return "Comment successfully";
 	}
 }

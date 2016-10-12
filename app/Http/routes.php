@@ -11,7 +11,7 @@
 */
 use Illuminate\Http\Request;
 Route::get('/', function () {
-    return view('page.single');
+    return view('page.index');
 });
 Route::get('/get_artists',function(){
 	$data = DB::table('artists')->select(['id', 'name'])->get();
@@ -24,7 +24,9 @@ Route::get('/get_cates',function(){
 	return $cates;
 });
 Route::get('/single/{id}', ['as' => 'single.show', 'uses' => 'SongsController@getSingle']);
-
+Route::get('/single/{id}/like', ['as' => 'single.like', 'uses' => 'SongsController@like']);
+Route::get('/single/{id}/download', ['as' => 'single.download', 'uses' => 'SongsController@download']);
+Route::post('/single/{id}/comment', ['as' => 'single.comment', 'uses' => 'SongsController@comment']);
 Route::group(['prefix' => 'admin'], function(){
 	//Songs
 	Route::get('song', ['as' => 'song.index', 'uses' => 'SongsController@index']);

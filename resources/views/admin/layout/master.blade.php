@@ -355,7 +355,7 @@
                         $scope.composers.push($scope.newComposer);
                         if($scope.artists.indexOf($scope.newComposer) == -1)
                         {
-                            var confirmAddArtist = confirm('The artist doesn\'t exsist, you want to create and add to list?');
+                            var confirmAddArtist = confirm('The artist doesn\'t exsist. Do you want to create and add to list?');
                             if(confirmAddArtist){
                                 $http.post('/admin/artist', {'name': $scope.newComposer})
                                 .success(function(data){

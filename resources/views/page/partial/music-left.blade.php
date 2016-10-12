@@ -70,7 +70,7 @@ $(document).ready(function() {
 <!--//pop-up-box -->
 <div class="albums">
 	<div class="tittle-head">
-		<h3 class="tittle">Discover <span class="new">View</span></h3>
+		<h3 class="tittle">Newest <span class="new">View</span></h3>
 		<a href="index.html"><h4 class="tittle two">See all</h4></a>
 		<div class="clearfix"> </div>
 	</div>

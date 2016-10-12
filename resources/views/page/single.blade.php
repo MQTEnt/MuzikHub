@@ -75,9 +75,9 @@
 					<!-- Single_left -->
 					<div class="single_left">
 						<div class="info">
-							<p>Thể hiện: {{$single->singer}}</p>
-							<p>Sáng tác: {{$single->composer}}</p>
-							<p>Thể loại: {{$single->cate}}</p>
+							<p>Singer: {{$single->singer}}</p>
+							<p>Composer: {{$single->composer}}</p>
+							<p>Category: {{$single->cate}}</p>
 						</div>
 						<div class="img-single">
 							<img width="150px" height="150px" src="{{$img->path}}" alt="" id="imgContent">
@@ -90,10 +90,10 @@
 						<div class="group-btn">
 							<div class="row">
 								<div class="col-sm-3 btn-single">
-									<a id="btnLike" style="cursor: pointer; text-decoration: none;"><span class="glyphicon glyphicon-thumbs-up"></span><span> Like</a> </span><span id="countLike" class="badge">10</span>
+									<a id="btnLike" style="cursor: pointer; text-decoration: none;"><span class="glyphicon glyphicon-thumbs-up"></span><span> Like</a> </span><span id="countLike" class="badge">{{$single->like}}</span>
 								</div>
 								<div class="col-sm-5 btn-single">
-									<a id="btnDownload" href="{{$audio->path}}" style="cursor: pointer; text-decoration: none;" download><span class="glyphicon glyphicon-download-alt"></span><span> Download</a> </span><span id="countDownload" class="badge">10</span>
+									<a id="btnDownload" href="{{$audio->path}}" style="cursor: pointer; text-decoration: none;" download><span class="glyphicon glyphicon-download-alt"></span><span> Download</a> </span><span id="countDownload" class="badge">{{$single->download}}</span>
 								</div>
 								<div class="col-sm-3 btn-single">
 									<a id="btnLyric" style="cursor: pointer; text-decoration: none;"><span class="glyphicon glyphicon-align-left"></span><span> Lyric</a></span>
@@ -108,6 +108,22 @@
 					<div class="response">
 						<div class="media response-info">
 							<!-- user comment -->
+							@if(isset($comments))
+								@foreach($comments as $item)
+								<div class="media-left response-text-left">
+									<a href="#"><img width="50px" height="50px" class="media-object" src="/imgs/user-icon.png" alt=""></a>
+									<h5><a href="#">Username</a></h5>
+								</div>
+								<div class="media-body response-text-right">
+									<p>{{$item->content}}</p>
+									<ul>
+										<?php $dateComment = explode(" ", $item->created_at)[0]; ?>
+										<li>{{$dateComment}}</li>
+									</ul>
+								</div>
+								<div class="clearfix"></div>
+								@endforeach
+							@endif
 						</div>
 					</div>
 					<div class="clearfix"></div>
@@ -115,6 +131,7 @@
 					<div class="coment-form">
 						<h4>Leave your comment</h4>
 						<form id="formComment" action="#" method="post">
+							<input type="hidden" name="_token" value="{{csrf_token()}}">
 							<textarea id="txtComment" placeholder="Write something..."></textarea>
 							<input id="btnSubmitComment" type="submit" value="Submit Comment">
 						</form>
@@ -150,6 +167,9 @@
 				{
 					var count = parseInt($('#countLike').text());
 					$('#countLike').text(++count);
+					$.get("/single/"+{{$single->id}}+"/like", function(data, status){
+       					 console.log(data);
+   					});
 					clickLike = false;
 				}
 				else{
@@ -163,6 +183,9 @@
 				{
 					var count = parseInt($('#countDownload').text());
 					$('#countDownload').text(++count);
+					$.get("/single/"+{{$single->id}}+"/download", function(data, status){
+       					 console.log(data);
+   					});
 					clickDownload = false;
 				}
 				else{
@@ -171,20 +194,33 @@
 			});
 			//click submit comment
 			$('#btnSubmitComment').click(function(){
+				var token = $("input[name='_token']").val();
 				var comment = $('#txtComment').val();
+				//Date comment
+				var d = new Date();
+				var month = d.getMonth()+1;
+				var day = d.getDate();
+				var date = d.getFullYear() + '-' +(month<10 ? '0' : '') + month + '-' +(day<10 ? '0' : '') + day;
+				//
 				if(comment.length < 10){
 					alert('The content must be at least 10 characters');
 					return 0;
 				}
-				var divComment = 	'<div class="media-left response-text-left">';
-				divComment += '<a href="#"><img width="50px" height="50px" class="media-object" src="/imgs/user-icon.png" alt=""></a>';
-				divComment += '<h5><a href="#">Username</a></h5>';				
-				divComment += '</div>';
-				divComment += '<div class="media-body response-text-right"><p>'+comment+'</p><ul><li>Date</li></ul>';
-				divComment += '</div><div class="clearfix"></div>';
-				$('.media').prepend(divComment);
+				var dataRequest = { 'content': comment, song_id: {{$single->id}}, '_token': token };
+				console.log(dataRequest);
+				$.post('/single/'+{{$single->id}}+'/comment', dataRequest)
+				.done(function( data ) {
+					console.log( "Data response: " + data );
+					var divComment = '<div class="media-left response-text-left">';
+					divComment += '<a href="#"><img width="50px" height="50px" class="media-object" src="/imgs/user-icon.png" alt=""></a>';
+					divComment += '<h5><a href="#">Username</a></h5>';				
+					divComment += '</div>';
+					divComment += '<div class="media-body response-text-right"><p>'+comment+'</p><ul><li>'+date+'</li></ul>';
+					divComment += '</div><div class="clearfix"></div>';
+					$('.media').prepend(divComment);
 
-				$('#txtComment').val("");
+					$('#txtComment').val("");
+				});
 			});
 			//Prevent Submit
 			$("#formComment").submit(function(e){
