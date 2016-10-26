@@ -11,7 +11,8 @@
 */
 use Illuminate\Http\Request;
 Route::get('/', function () {
-    return view('page.index');
+	$songs = App\Song::limit(4)->orderBy('id', 'DESC')->get();
+    return view('page.index', compact(['songs']));
 });
 Route::get('/get_artists',function(){
 	$data = DB::table('artists')->select(['id', 'name'])->get();

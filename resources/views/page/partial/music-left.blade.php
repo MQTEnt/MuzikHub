@@ -68,58 +68,19 @@ $(document).ready(function() {
 });
 </script>		
 <!--//pop-up-box -->
-<div class="albums">
+<div class="albums second">
 	<div class="tittle-head">
-		<h3 class="tittle">Newest <span class="new">View</span></h3>
+		<h3 class="tittle">Discover <span class="new">View</span></h3>
 		<a href="index.html"><h4 class="tittle two">See all</h4></a>
 		<div class="clearfix"> </div>
 	</div>
+	@foreach($songs as $item)
 	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v1.jpg" title="allbum-name"></a>
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
+		<a href="/single/{{$item->id}}"><img src="{{$item->image->path}}"></a>
+		<div class="inner-info"><a href="/single/{{$item->id}}"><h5>Listen</h5></a></div>
 	</div>
-	<div id="small-dialog" class="mfp-hide">
-		<!-- <iframe src="https://player.vimeo.com/video/12985622"></iframe>-->
-	</div>
-	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v2.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v3.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="col-md-3 content-grid last-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v4.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v5.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div id="small-dialog" class="mfp-hide">
-		<!-- <iframe src="https://player.vimeo.com/video/12985622"></iframe> -->
-
-	</div>
-	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v6.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="col-md-3 content-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v7.jpg" title="allbum-name"></a>
-
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="col-md-3 content-grid last-grid">
-		<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src="/imgs/v8.jpg" title="allbum-name"></a>
-		<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">Listen now</a>
-	</div>
-	<div class="clearfix"> </div>
+	@endforeach
+	<div class="clearfix"></div>
 </div>
 <!--End albums-->
 <div class="albums second">

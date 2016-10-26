@@ -9,4 +9,8 @@ class Song extends Model
 	protected $table = 'songs';
 	protected $fillable = ['id', 'name', 'year_composed', 'lyric', 'audio_id', 'image_id', 'cate', 'singer', 'composer', 'like', 'download'];
 	public $timestamps = true;
+	public function image()
+    {
+        return $this->belongsTo('App\Image', 'image_id');
+    }
 }
