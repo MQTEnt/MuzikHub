@@ -22,7 +22,7 @@ class SongsController extends Controller
 {
 	public function __construct(){
 		/*
-		*Add custom validate (adudio file)
+		*Add custom validate (audio file)
 		*... after that, add rule and message in SongFormRequest
 		*/
 		Validator::extend('audio', function($attribute, $value, $parameters)

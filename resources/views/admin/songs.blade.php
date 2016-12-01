@@ -45,9 +45,7 @@
 													<h4 class="modal-title">List composers</h4>
 												</div>
 												<div class="modal-body">
-													<script>
-														$('#composerModal .modal-body').load('/templates/get_composer_quick_form.html');
-													</script>
+													@include('admin.partial.get_composer_quick_form')
 												</div>
 											</div>
 										</div>
@@ -72,9 +70,7 @@
 													<h4 class="modal-title">List singers</h4>
 												</div>
 												<div class="modal-body">
-													<script>
-														$('#singerModal .modal-body').load('/templates/get_singer_quick_form.html');
-													</script>
+													@include('admin.partial.get_singer_quick_form')
 												</div>
 											</div>
 										</div>
@@ -99,9 +95,7 @@
 													<h4 class="modal-title">List categories</h4>
 												</div>
 												<div class="modal-body">
-													<script>
-														$('#cateModal .modal-body').load('/templates/get_cate_quick_form.html');
-													</script>
+													@include('admin.partial.get_cate_quick_form')
 												</div>
 											</div>
 										</div>
